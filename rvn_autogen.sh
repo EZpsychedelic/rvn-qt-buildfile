@@ -44,6 +44,7 @@ sys_update ()
 		echo "[+] System Updated with 'apt-get update'"
 	else
 	error "Run 'sudo apt-get update' and continue with installation"
+	fi
 }
 
 # And then add BerkelyDB4 dependencies
