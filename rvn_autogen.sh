@@ -16,12 +16,12 @@ check_root ()
 }
 
 # Install preliminary repositories
-preRepo ()
+depend ()
 {
-	if apt-get -y install libevent-dev libboost-all-dev libminiupnpc10 libzmq5 software-properties-common; then
+	if apt-get -y install libevent-dev libboost-all-dev libminiupnpc10 libzmq5 software-properties-common libqrencode3; then
 		echo "[+] Repositories installed..."
 	else
-		echo "[-] Install: libevent-dev libboost-all-dev libminiupnpc10 libzmq5 software-properties-common"
+		echo "Install libevent-dev libboost-all-dev libminiupnpc10 libzmq5 software-properties-common"
 		error "Use apt-get -y install libevent-dev libboost-all-dev libminiupnpc10 libzmq5 software-properties-common"
 	fi
 }
@@ -36,24 +36,34 @@ berkleydb ()
 	fi
 }
 
-recNew ()
+# Update system
+sys_update ()
 {
-	if apt-get update && apt-get -y install libdb4.8-dev libdb4.8++-dev; then
-		echo "[+] Connected to CYBERDYNE Servers"
+	check_root
+	if apt-get update; then
+		echo "[+] System Updated with 'apt-get update'"
 	else
-	error "Update system and use 'apt-get -y install libdb4.8-dev libdb4.8++-dev'"
+	error "Run 'sudo apt-get update' and continue with installation"
+}
+
+# And then add BerkelyDB4 dependencies
+berkley_new ()
+{
+	if apt-get -y install libdb4.8-dev libdb4.8++-dev; then
+		echo "[+] libdb4.8-dev libdb4.8++-dev added to repositories"
+	else
+	error "Run 'apt-get update' and 'apt-get -y install libdb4.8-dev libdb4.8++-dev'"
 	fi
 }
 
-genRepos ()
+gen_ravend ()
 {
 	check_root
-	apt-get update
-	preRepo
+	sys_update
+	depend
 	berkleydb
-	recNew
-	apt install libqrencode3
+	sys_update
+	berkley_new
 }
 
-genRepos
-./raven-qt
+gen_ravend
